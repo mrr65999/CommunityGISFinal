@@ -1,0 +1,258 @@
+---
+title: "Data Cleaning for Community GIS"
+author: "Maya Rao"
+date: "2023-04-18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(ggmap)
+library(tidyverse)
+library(tidycensus)
+library(dplyr)
+library(data.table)
+library(ggpubr)
+```
+
+## Loading in Files
+
+```{r}
+
+County2009 <- read.csv("nhgis0017_csv/nhgis0017_ds195_20095_county.csv")
+County2010 <- read.csv("nhgis0017_csv/nhgis0017_ds176_20105_county.csv")
+County2011 <- read.csv("nhgis0017_csv/nhgis0017_ds184_20115_county.csv")
+County2012 <- read.csv("nhgis0017_csv/nhgis0017_ds191_20125_county.csv")
+County2013 <- read.csv("nhgis0017_csv/nhgis0017_ds201_20135_county.csv")
+County2014 <- read.csv("nhgis0017_csv/nhgis0017_ds206_20145_county.csv")
+County2015 <- read.csv("nhgis0017_csv/nhgis0017_ds215_20155_county.csv")
+County2016 <- read.csv("nhgis0017_csv/nhgis0017_ds225_20165_county.csv")
+County2017 <- read.csv("nhgis0017_csv/nhgis0017_ds233_20175_county.csv")
+County2018 <- read.csv("nhgis0017_csv/nhgis0017_ds239_20185_county.csv")
+County2019 <- read.csv("nhgis0017_csv/nhgis0017_ds244_20195_county.csv")
+County2020 <- read.csv("nhgis0017_csv/nhgis0017_ds249_20205_county.csv")
+County2021 <- read.csv("nhgis0017_csv/nhgis0017_ds254_20215_county.csv")
+
+```
+
+## Filter for Clarke County, GA
+
+You can also embed plots, for example:
+
+```{r}
+County2009 <- County2009 %>% 
+  filter(STATE == "Georgia", COUNTY == "Clarke County") %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, RNHE001, RR0E001, RR0E002, RR0E003, RR0E004, RR0E005, RR0E006, 
+         RR0E007, RR0E008, RR0E009, RR0E010) %>%
+  mutate(HousingStress = (RR0E007 + RR0E008 + RR0E009 + RR0E010)/RR0E001) %>% 
+  mutate(ExHousingStress = (RR0E010/RR0E001)) %>% 
+  rename(MedianInc = RNHE001) %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, MedianInc, HousingStress, ExHousingStress)
+
+County2010 <- County2010 %>% 
+  filter(STATE == "Georgia", COUNTY == "Clarke County") %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, JOIE001, JTBE001, JTBE002, JTBE003, JTBE004, JTBE005, JTBE006, 
+         JTBE007, JTBE008, JTBE009, JTBE010) %>%
+  mutate(HousingStress = (JTBE007 + JTBE008 + JTBE009 + JTBE010)/JTBE001) %>% 
+  mutate(ExHousingStress = (JTBE010/JTBE001)) %>% 
+  rename(MedianInc = JTBE001) %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, MedianInc, HousingStress, ExHousingStress)
+
+```
+
+```{r}
+County2011 <- County2011 %>% 
+  filter(STATE == "Georgia", COUNTY == "Clarke County") %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, MP1E001, MUVE001, MUVE002, MUVE003, MUVE004, MUVE005, MUVE006, 
+         MUVE007, MUVE008, MUVE009, MUVE010) %>%
+  mutate(HousingStress = (MUVE007 + MUVE008 + MUVE009 + MUVE010)/MUVE001) %>% 
+  mutate(ExHousingStress = (MUVE010/MUVE001)) %>% 
+  rename(MedianInc = MUVE001) %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, MedianInc, HousingStress, ExHousingStress)
+```
+
+```{r}
+County2012 <- County2012 %>% 
+  filter(STATE == "Georgia", COUNTY == "Clarke County") %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, QU1E001, QZZE001, QZZE002, QZZE003, QZZE004, QZZE005, QZZE006, 
+         QZZE007, QZZE008, QZZE009, QZZE010) %>%
+  mutate(HousingStress = (QZZE007 + QZZE008 + QZZE009 + QZZE010)/QZZE001) %>% 
+  mutate(ExHousingStress = (QZZE010/QZZE001)) %>% 
+  rename(MedianInc = QZZE001) %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, MedianInc, HousingStress, ExHousingStress)
+```
+
+```{r}
+County2013 <- County2013 %>% 
+  filter(STATE == "Georgia", COUNTY == "Clarke County") %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, UHDE001, UMFE001, UMFE002, UMFE003, UMFE004, UMFE005, UMFE006, 
+         UMFE007, UMFE008, UMFE009, UMFE010) %>%
+  mutate(HousingStress = (UMFE007 + UMFE008 + UMFE009 + UMFE010)/UMFE001) %>% 
+  mutate(ExHousingStress = (UMFE010/UMFE001)) %>% 
+  rename(MedianInc = UMFE001) %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, MedianInc, HousingStress, ExHousingStress)
+```
+
+```{r}
+County2014 <- County2014 %>% 
+  filter(STATE == "Georgia", COUNTY == "Clarke County") %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, ABDPE001, ABINE001, ABINE002, ABINE003, ABINE004, ABINE005, 
+         ABINE006, ABINE007, ABINE008, ABINE009, ABINE010) %>%
+  mutate(HousingStress = (ABINE007 + ABINE008 + ABINE009 + ABINE010)/ABINE001) %>% 
+  mutate(ExHousingStress = (ABINE010/ABINE001)) %>% 
+  rename(MedianInc = ABINE001) %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, MedianInc, HousingStress, ExHousingStress)
+```
+
+
+```{r}
+County2015 <- County2015 %>% 
+    filter(STATE == "Georgia", COUNTY == "Clarke County") %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, ADNKE001, ADRQE001, ADRQE002, ADRQE003, ADRQE004, ADRQE005, 
+         ADRQE006, ADRQE007, ADRQE008, ADRQE009, ADRQE010) %>%
+  mutate(HousingStress = (ADRQE007 + ADRQE008 + ADRQE009 + ADRQE010)/ADRQE001) %>% 
+  mutate(ExHousingStress = (ADRQE010/ADRQE001)) %>% 
+  rename(MedianInc = ADRQE001) %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, MedianInc, HousingStress, ExHousingStress)
+```
+
+
+```{r}
+County2016 <- County2016 %>% 
+    filter(STATE == "Georgia", COUNTY == "Clarke County") %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, AF49E001, AF9FE001, AF9FE002, AF9FE003, AF9FE004, AF9FE005, 
+         AF9FE006,AF9FE007, AF9FE008, AF9FE009, AF9FE010) %>%
+  mutate(HousingStress = (AF9FE007 + AF9FE008 + AF9FE009 + AF9FE010)/AF9FE001) %>% 
+  mutate(ExHousingStress = (AF9FE010/AF9FE001)) %>% 
+  rename(MedianInc = AF9FE001) %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, MedianInc, HousingStress, ExHousingStress)
+```
+
+
+```{r}
+County2017 <- County2017 %>% 
+    filter(STATE == "Georgia", COUNTY == "Clarke County") %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, AH1PE001, AH5XE001, AH5XE002, AH5XE003, AH5XE004, AH5XE005, 
+         AH5XE006, AH5XE007, AH5XE008, AH5XE009, AH5XE010) %>%
+  mutate(HousingStress = (AH5XE007 + AH5XE008 + AH5XE009 + AH5XE010)/AH5XE001) %>% 
+  mutate(ExHousingStress = (AH5XE010/AH5XE001)) %>% 
+  rename(MedianInc = AH5XE001) %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, MedianInc, HousingStress, ExHousingStress)
+```
+
+
+```{r}
+County2018 <- County2018 %>% 
+    filter(STATE == "Georgia", COUNTY == "Clarke County") %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, AJZAE001, AJ3KE001, AJ3KE002, AJ3KE003, AJ3KE004, AJ3KE005, 
+         AJ3KE006, AJ3KE007, AJ3KE008, AJ3KE009, AJ3KE010) %>%
+  mutate(HousingStress = (AJ3KE007 + AJ3KE008 + AJ3KE009 + AJ3KE010)/AJ3KE001) %>% 
+  mutate(ExHousingStress = (AJ3KE010/AJ3KE001)) %>% 
+  rename(MedianInc = AJ3KE001) %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, MedianInc, HousingStress, ExHousingStress)
+```
+
+
+
+```{r}
+County2019 <- County2019 %>% 
+    filter(STATE == "Georgia", COUNTY == "Clarke County") %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, ALW1E001, AL1BE001, AL1BE002, AL1BE003, AL1BE004, AL1BE005, 
+         AL1BE006,AL1BE007, AL1BE008, AL1BE009, AL1BE010) %>%
+  mutate(HousingStress = (AL1BE007 + AL1BE008 + AL1BE009 + AL1BE010)/AL1BE001) %>% 
+  mutate(ExHousingStress = (AL1BE010/AL1BE001)) %>% 
+  rename(MedianInc = AL1BE001) %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, MedianInc, HousingStress, ExHousingStress)
+```
+
+
+
+```{r}
+County2020 <- County2020 %>% 
+    filter(STATE == "Georgia", COUNTY == "Clarke County") %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, AMR8E001, AMV5E001, AMV5E002, AMV5E003, AMV5E004, AMV5E005, 
+         AMV5E006, AMV5E007, AMV5E008, AMV5E009, AMV5E010) %>%
+  mutate(HousingStress = (AMV5E007 + AMV5E008 + AMV5E009 + AMV5E010)/AMV5E001) %>% 
+  mutate(ExHousingStress = (AMV5E010/AMV5E001)) %>% 
+  rename(MedianInc = AMV5E001) %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, MedianInc, HousingStress, ExHousingStress)
+```
+
+
+
+```{r}
+County2021 <- County2021 %>% 
+  filter(STATE == "Georgia", COUNTY == "Clarke County") %>% 
+  select(GISJOIN, GEO_ID, YEAR, STATE, COUNTY, AOQIE001, AOUFE001, AOUFE002, AOUFE003, AOUFE004, AOUFE005,
+         AOUFE006, AOUFE007, AOUFE008, AOUFE009, AOUFE010) %>%
+  mutate(HousingStress = (AOUFE007 + AOUFE008 + AOUFE009 + AOUFE010)/AOUFE001) %>% 
+  mutate(ExHousingStress = (AOUFE010/AOUFE001)) %>% 
+  rename(MedianInc = AOUFE001, GEOID = GEO_ID) %>% 
+  select(GISJOIN, GEOID, YEAR, STATE, COUNTY, MedianInc, HousingStress, ExHousingStress)
+```
+
+```{r}
+JoinedCounty <- bind_rows(County2009, County2010, County2011, County2012, County2013, County2014, County2015,
+                          County2016, County2017, County2018, County2019, County2020, County2021)
+```
+
+#Writing the file
+
+```{r}
+write.csv(JoinedCounty, "CountyData0921.csv")
+```
+
+```{r}
+JoinedCounty <- read.csv("CountyData0921.csv")
+
+PlottingIncHousing <- ggplot(JoinedCounty) +
+  geom_point(aes(MedianInc, HousingStress))
+
+PlottingIncHousing
+
+cor.test(JoinedCounty$MedianInc, JoinedCounty$HousingStress, method = "pearson")
+
+```
+
+```{r}
+JoinedCounty <- read.csv("CountyData0921.csv")
+
+PlottingIncExHousing <- ggplot(JoinedCounty) +
+  geom_point(aes(MedianInc, ExHousingStress))
+
+PlottingIncExHousing
+
+cor.test(JoinedCounty$MedianInc, JoinedCounty$ExHousingStress, method = "pearson")
+
+```
+
+#Making Line graph
+
+```{r}
+JoinedCounty$YEARSINGLE=substr(JoinedCounty$YEAR,6,9)
+
+HousingStressTime<- ggplot(JoinedCounty, aes(x = YEARSINGLE, y = HousingStress, group = 1)) +
+  geom_line() 
+  #ylim(0, 0.6)
+
+
+ExHousingStressTime<- ggplot(JoinedCounty, aes(x = YEARSINGLE, y = ExHousingStress, group = 1)) +
+  geom_line() 
+ # ylim(0,0.6)
+
+HousingStressTime
+ExHousingStressTime
+```
+
+```{r}
+BothVariablesTime <- ggplot(JoinedCounty, aes(x = YEARSINGLE, group = 1)) +
+  geom_line(aes(y = HousingStress, color = "Housing Stress")) +
+  geom_line(aes(y = ExHousingStress, color = "Extreme Housing Stress")) +
+  ylab("Percent of people living in Housing Stess") +
+  xlab("Year")
+
+BothVariablesTime
+```
+
+
